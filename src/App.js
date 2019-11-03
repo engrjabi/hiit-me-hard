@@ -27,7 +27,9 @@ function App() {
     spotifyURIHigh,
     timerLowSec,
     timerHighSec,
-    youtubeURL
+    youtubeURL,
+    coolDownExercise,
+    warmUpExercise
   } = importParser();
   const youtubePlayer = React.useRef(null);
   const { seconds, minutes, pause, resume, restart } = useTimer({
@@ -40,6 +42,7 @@ function App() {
       if (currentMode === "low" && exercises.length === setNumber + 1) {
         setNextMode("cool-down");
         restart(dateWithSecOffset(timerCoolDownSec));
+        youtubePlayer.current.seekTo(coolDownExercise.timeStart);
         return;
       }
 
@@ -149,6 +152,7 @@ function App() {
         // Set device id on main state so other functions can use
         setMainPlayer(player);
         setDeviceId(device_id);
+        youtubePlayer.current.seekTo(warmUpExercise.timeStart);
       }
     })();
   }, []);
