@@ -1,12 +1,15 @@
 export function parseParams(str) {
-  var pieces = str.slice(1).split('&'), data = {}, i, parts
+  var pieces = str.slice(1).split("&"),
+    data = {},
+    i,
+    parts;
   // process each query pair
   for (i = 0; i < pieces.length; i++) {
-    parts = pieces[i].split('=')
+    parts = pieces[i].split("=");
     if (parts.length < 2) {
-      parts.push('')
+      parts.push("");
     }
-    data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1])
+    data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
   }
-  return data
+  return data;
 }
