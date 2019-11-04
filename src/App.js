@@ -4,7 +4,7 @@ import _padStart from "lodash/padStart";
 import { useTimer } from "react-timer-hook";
 import "./App.css";
 import { YoutubePlayer } from "./youtube/youtubePlayer";
-import { dateWithSecOffset, timeToSeconds } from "./utils/date";
+import { dateWithSecOffset, fancyTimeFormat, timeToSeconds } from "./utils/date";
 import { parseParams } from "./utils/urls";
 import { beepRest, beepStart } from "./utils/beep";
 import { makeNewSpotifyPlayer, spotifyApi } from "./spotify/spotify";
@@ -40,7 +40,8 @@ function App() {
     timerHighSec,
     youtubeURL,
     coolDownExercise,
-    warmUpExercise
+    warmUpExercise,
+    workoutTotalTimeSec
   } = importParser();
   const youtubePlayer = React.useRef(null);
 
@@ -228,6 +229,7 @@ function App() {
         )}
         <h2>{exerNameDisplay}</h2>
         <h3>{currentMode.toUpperCase()}</h3>
+        <p>TOTAL TIME {fancyTimeFormat(workoutTotalTimeSec)}</p>
         <p>
           {_padStart(minutes, 2, "0")} : {_padStart(seconds, 2, "0")}
         </p>

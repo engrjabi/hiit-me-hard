@@ -5,14 +5,12 @@ const sampleShareableConfig = {
   spotifyURILow: "spotify:playlist:5MiUNFzBc7Y1Ccq7iEtex5",
   spotifyURIHigh: "spotify:playlist:16zWE2aZ4Y6zUOxEncGcdQ",
   youtubeURL: "https://www.youtube.com/watch?v=VvfVMkWngRM",
-  timerWarmUpSec: 20,
   timerLowSec: 30,
   timerHighSec: 30,
-  timerRestSec: 15,
-  timerCoolDownSec: 60,
+  timerRestSec: 10,
   timeSeekPosSecMin: 30,
   timeSeekPosSecMax: 90,
-  intervalMultiplier: 3,
+  intervalMultiplier: 2,
   coolDownExercise: {
     title: "easy cool down",
     timeStart: [31, 0],
@@ -86,7 +84,7 @@ export const multiplyArray = (arr, times) => {
 };
 
 export const importParser = (importContents = sampleShareableConfig) => {
-  const bufferSec = 2;
+  const bufferSec = 1; // Buffer for slow loading time and for timer render initialization
   const warmUpExerciseStartSec = timeToSeconds(
     importContents.warmUpExercise.timeStart[0],
     importContents.warmUpExercise.timeStart[1]
@@ -102,6 +100,15 @@ export const importParser = (importContents = sampleShareableConfig) => {
     importContents.coolDownExercise.timeEnd[1]
   );
 
+  const timerWarmUpSec = warmUpExerciseEndSec - warmUpExerciseStartSec + bufferSec;
+  const timerCoolDownSec = coolDownExerciseEndSec - coolDownExerciseStartSec + bufferSec;
+  const timerRestSec = importContents.timerRestSec + bufferSec;
+  const timerHighSec = importContents.timerHighSec + bufferSec;
+  const timerLowSec = importContents.timerLowSec + bufferSec;
+  const totalTimeInOneSet = timerRestSec + timerRestSec + timerHighSec + timerLowSec;
+  const totalTimeInSets = importContents.intervalMultiplier * importContents.exercises.length * totalTimeInOneSet;
+  const workoutTotalTimeSec = timerWarmUpSec + totalTimeInSets + timerCoolDownSec;
+
   return {
     spotifyURILow: importContents.spotifyURILow,
     spotifyURIHigh: importContents.spotifyURIHigh,
@@ -112,6 +119,7 @@ export const importParser = (importContents = sampleShareableConfig) => {
     timerRestSec: importContents.timerRestSec + bufferSec,
     timerCoolDownSec: coolDownExerciseEndSec - coolDownExerciseStartSec + bufferSec,
     timeSeekPosMs: () => _random(importContents.timeSeekPosSecMin * 1000, importContents.timeSeekPosSecMax * 1000, false),
+    workoutTotalTimeSec,
     coolDownExercise: {
       ...importContents.coolDownExercise,
       timeStart: timeToSeconds(importContents.coolDownExercise.timeStart[0], importContents.coolDownExercise.timeStart[1]),
