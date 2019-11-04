@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import _get from "lodash/get";
+import _padStart from "lodash/padStart";
 import { useTimer } from "react-timer-hook";
 import "./App.css";
 import { YoutubePlayer } from "./youtube/youtubePlayer";
-import { dateWithSecOffset } from "./utils/date";
+import { dateWithSecOffset, timeToSeconds } from "./utils/date";
 import { parseParams } from "./utils/urls";
 import { beepRest, beepStart } from "./utils/beep";
 import { makeNewSpotifyPlayer, spotifyApi } from "./spotify/spotify";
 import { importParser } from "./utils/dataImportExport";
+import LinearProgress from "@material-ui/core/LinearProgress";
+
+const linearBarColorBasedOnMode = {
+  "warm-up": "bar-color-warm-up",
+  "rest-low": "bar-color-rest",
+  "rest-high": "bar-color-rest",
+  high: "bar-color-high",
+  low: "bar-color-low",
+  "cool-down": "bar-color-cool-down"
+};
 
 function App() {
   const hashCollection = parseParams(window.location.hash);
@@ -32,6 +43,9 @@ function App() {
     warmUpExercise
   } = importParser();
   const youtubePlayer = React.useRef(null);
+
+  const [currentExpirationTimeSec, setCurrentExpirationTimeSec] = useState(timerWarmUpSec);
+
   const { seconds, minutes, pause, resume, restart } = useTimer({
     expiryTimestamp: dateWithSecOffset(timerWarmUpSec),
     onExpire: () => setTimerExpired(true)
@@ -41,6 +55,7 @@ function App() {
     if (timerExpired) {
       if (currentMode === "low" && exercises.length === setNumber + 1) {
         setNextMode("cool-down");
+        setCurrentExpirationTimeSec(timerCoolDownSec);
         restart(dateWithSecOffset(timerCoolDownSec));
         youtubePlayer.current.seekTo(coolDownExercise.timeStart);
         return;
@@ -62,6 +77,7 @@ function App() {
           });
         })();
 
+        setCurrentExpirationTimeSec(timerRestSec);
         restart(dateWithSecOffset(timerRestSec));
       }
 
@@ -82,6 +98,7 @@ function App() {
           });
         })();
 
+        setCurrentExpirationTimeSec(timerRestSec);
         restart(dateWithSecOffset(timerRestSec));
       }
 
@@ -89,6 +106,7 @@ function App() {
         beepStart();
         setNextMode("low");
         mainPlayer.setVolume(1);
+        setCurrentExpirationTimeSec(timerLowSec);
         restart(dateWithSecOffset(timerLowSec));
       }
 
@@ -96,6 +114,7 @@ function App() {
         beepStart();
         setNextMode("high");
         mainPlayer.setVolume(1);
+        setCurrentExpirationTimeSec(timerHighSec);
         restart(dateWithSecOffset(timerHighSec));
       }
 
@@ -132,6 +151,7 @@ function App() {
       const accessKeysParsed = accessKeys ? JSON.parse(accessKeys) : {};
 
       if (accessKeysParsed) {
+        pause();
         const { device_id, player } = await makeNewSpotifyPlayer(accessKeysParsed.access_token);
         await spotifyApi.setAccessToken(accessKeysParsed.access_token);
 
@@ -149,16 +169,16 @@ function App() {
         // Skip so it will not always play the first song
         // await spotifyApi.skipToNext();
 
-        // Set device id on main state so other functions can use
-        setMainPlayer(player);
-        setDeviceId(device_id);
-        youtubePlayer.current.seekTo(warmUpExercise.timeStart);
         await new Promise(resolve => setTimeout(resolve, 1000));
         await spotifyApi.pause({
           device_id: device_id
         });
-        pause();
         setIsPaused(true);
+
+        // Set device id on main state so other functions can use
+        setMainPlayer(player);
+        setDeviceId(device_id);
+        youtubePlayer.current.seekTo(warmUpExercise.timeStart);
       }
     })();
   }, []);
@@ -175,8 +195,26 @@ function App() {
     return "";
   }, [setNumber, currentMode]);
 
+  const normalizedPercentage = (timeToSeconds(minutes, seconds) / currentExpirationTimeSec) * 100;
+
   return (
     <div className="App">
+      <LinearProgress
+        variant="determinate"
+        value={normalizedPercentage}
+        style={{
+          height: "1rem",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          zIndex: 5
+        }}
+        classes={{
+          barColorPrimary: linearBarColorBasedOnMode[currentMode]
+        }}
+      />
+
       <YoutubePlayer youtubePlayerRef={youtubePlayer} isPaused={isPaused} url={youtubeURL} />
 
       <header className="App-header">
@@ -188,7 +226,7 @@ function App() {
         <h2>{exerNameDisplay}</h2>
         <h3>{currentMode.toUpperCase()}</h3>
         <p>
-          {minutes} : {seconds}
+          {_padStart(minutes, 2, "0")} : {_padStart(seconds, 2, "0")}
         </p>
 
         <div

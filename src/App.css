@@ -17,3 +17,23 @@
   transform: translate(-50%, -50%);
   z-index: 1;
 }
+
+div.bar-color-warm-up {
+  background-color: #ba4312;
+}
+
+div.bar-color-rest {
+  background-color: #3f51b5;
+}
+
+div.bar-color-low {
+  background-color: #ffd335;
+}
+
+div.bar-color-high {
+  background-color: #ff2538;
+}
+
+div.bar-color-cool-down {
+  background-color: #3f51b5;
+}
