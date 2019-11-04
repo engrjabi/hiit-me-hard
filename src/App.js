@@ -54,6 +54,7 @@ function App() {
   React.useEffect(() => {
     if (timerExpired) {
       if (currentMode === "low" && exercises.length === setNumber + 1) {
+        beepRest();
         setNextMode("cool-down");
         setCurrentExpirationTimeSec(timerCoolDownSec);
         restart(dateWithSecOffset(timerCoolDownSec));
@@ -106,6 +107,7 @@ function App() {
         beepStart();
         setNextMode("low");
         mainPlayer.setVolume(1);
+        youtubePlayer.current.seekTo(exercises[setNumber].lowTime);
         setCurrentExpirationTimeSec(timerLowSec);
         restart(dateWithSecOffset(timerLowSec));
       }
@@ -114,6 +116,7 @@ function App() {
         beepStart();
         setNextMode("high");
         mainPlayer.setVolume(1);
+        youtubePlayer.current.seekTo(exercises[setNumber].highTime);
         setCurrentExpirationTimeSec(timerHighSec);
         restart(dateWithSecOffset(timerHighSec));
       }
