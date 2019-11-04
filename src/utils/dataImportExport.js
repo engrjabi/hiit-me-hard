@@ -12,7 +12,7 @@ const sampleShareableConfig = {
   timerCoolDownSec: 60,
   timeSeekPosSecMin: 30,
   timeSeekPosSecMax: 90,
-  intervalMultiplier: 1,
+  intervalMultiplier: 3,
   coolDownExercise: {
     title: "easy cool down",
     timeStart: [31, 0],
@@ -75,6 +75,16 @@ const sampleShareableConfig = {
   ]
 };
 
+export const multiplyArray = (arr, times) => {
+  let finalArray = arr;
+
+  for (let i = 0; i < times; i++) {
+    finalArray = finalArray.concat(arr);
+  }
+
+  return finalArray;
+};
+
 export const importParser = (importContents = sampleShareableConfig) => {
   const bufferSec = 2;
   const warmUpExerciseStartSec = timeToSeconds(
@@ -112,7 +122,7 @@ export const importParser = (importContents = sampleShareableConfig) => {
       timeStart: timeToSeconds(importContents.warmUpExercise.timeStart[0], importContents.warmUpExercise.timeStart[1]),
       timeEnd: timeToSeconds(importContents.warmUpExercise.timeEnd[0], importContents.warmUpExercise.timeEnd[1])
     },
-    exercises: importContents.exercises.map(exercise => {
+    exercises: multiplyArray(importContents.exercises, importContents.intervalMultiplier).map(exercise => {
       return {
         ...exercise,
         highTime: timeToSeconds(exercise.highTime[0], exercise.highTime[1]),
