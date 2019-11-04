@@ -147,12 +147,18 @@ function App() {
         });
 
         // Skip so it will not always play the first song
-        await spotifyApi.skipToNext();
+        // await spotifyApi.skipToNext();
 
         // Set device id on main state so other functions can use
         setMainPlayer(player);
         setDeviceId(device_id);
         youtubePlayer.current.seekTo(warmUpExercise.timeStart);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await spotifyApi.pause({
+          device_id: device_id
+        });
+        pause();
+        setIsPaused(true);
       }
     })();
   }, []);
@@ -174,7 +180,11 @@ function App() {
       <YoutubePlayer youtubePlayerRef={youtubePlayer} isPaused={isPaused} url={youtubeURL} />
 
       <header className="App-header">
-        {setNumber > -1 && <h2>SET {setNumber + 1}</h2>}
+        {setNumber > -1 && (
+          <h2>
+            SET {setNumber + 1} OF {exercises.length}
+          </h2>
+        )}
         <h2>{exerNameDisplay}</h2>
         <h3>{currentMode.toUpperCase()}</h3>
         <p>
