@@ -2,14 +2,14 @@ import { timeToSeconds } from "./date";
 import _random from "lodash/random";
 
 const sampleShareableConfig = {
-  spotifyURILow: "spotify:playlist:5MiUNFzBc7Y1Ccq7iEtex5",
-  spotifyURIHigh: "spotify:playlist:16zWE2aZ4Y6zUOxEncGcdQ",
+  spotifyURILow: "spotify:playlist:2t2xQB7eGyjpVdxXuiSeRH",
+  spotifyURIHigh: "spotify:playlist:2t71qpBkRHwr6rMtzSCNKr",
   youtubeURL: "https://www.youtube.com/watch?v=VvfVMkWngRM",
   timerLowSec: 30,
   timerHighSec: 30,
   timerRestSec: 10,
-  timeSeekPosSecMin: 30,
-  timeSeekPosSecMax: 90,
+  timeSeekPosSecMin: 50,
+  timeSeekPosSecMax: 60,
   intervalMultiplier: 2,
   coolDownExercise: {
     title: "easy cool down",
@@ -24,51 +24,45 @@ const sampleShareableConfig = {
   exercises: [
     {
       high: "punch with knee up (right)",
-      highTime: [3, 3],
+      highTime: [3, 4],
       low: "arm down and up",
-      lowTime: [6, 20]
+      lowTime: [4, 20]
     },
     {
       high: "punch with knee up (left)",
-      highTime: [3, 3],
+      highTime: [3, 4],
       low: "arm down and up",
-      lowTime: [6, 20]
+      lowTime: [4, 20]
     },
     {
-      high: "punches straight",
-      highTime: [7, 44],
-      low: "side knee up (right)",
-      lowTime: [8, 50]
-    },
-    {
-      high: "punches straight",
-      highTime: [7, 44],
-      low: "side knee up (left)",
-      lowTime: [8, 50]
-    },
-    {
-      high: "punches with weights",
-      highTime: [15, 32],
+      high: "clap and knee up",
+      highTime: [22, 6],
       low: "side pull ups with weights",
-      lowTime: [16, 20]
+      lowTime: [16, 14]
+    },
+    {
+      high: "punches straight",
+      highTime: [7, 44],
+      low: "arm up, side, and down with weights",
+      lowTime: [20, 50]
     },
     {
       high: "arms forward foot side (left)",
       highTime: [10, 50],
       low: "arm up and pull up",
-      lowTime: [12, 10]
+      lowTime: [12, 3]
     },
     {
       high: "arms forward foot side (right)",
       highTime: [10, 50],
       low: "arm up and pull up",
-      lowTime: [12, 10]
+      lowTime: [12, 3]
     },
     {
-      high: "punches with weights",
-      highTime: [15, 32],
-      low: "side pull ups with weights",
-      lowTime: [16, 20]
+      high: "side punches and squat",
+      highTime: [23, 46],
+      low: "arm up, side, and down with weights",
+      lowTime: [20, 50]
     }
   ]
 };
@@ -76,7 +70,7 @@ const sampleShareableConfig = {
 export const multiplyArray = (arr, times) => {
   let finalArray = arr;
 
-  for (let i = 0; i < times; i++) {
+  for (let i = 1; i < times; i++) {
     finalArray = finalArray.concat(arr);
   }
 
